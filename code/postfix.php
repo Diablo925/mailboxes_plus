@@ -95,9 +95,9 @@ if (!fs_director::CheckForEmptyValue(self::$create)) {
 														 	'1')");
         $password = '{PLAIN-MD5}' . md5($password);
         $location = $domain . "/" . $address . "/";
+        // Change by diablo925 get info from a value and not settings
         //$maxMail = ctrl_options::GetSystemOption('max_mail_size');
 		$maxMail = "$quota";
-
         $sql->bindParam(':password', $password);
         $sql->bindParam(':address', $address);
         $sql->bindParam(':fulladdress', $fulladdress);
