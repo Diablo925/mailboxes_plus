@@ -41,23 +41,7 @@ class module_controller extends ctrl_module
      * The 'worker' methods.
      */ 
 		 
-	static function getMailQuote()
-    {
-		global $zdbh;
-		global $controller;
-        $sql = "SELECT * FROM x_settings WHERE so_name_vc=:name";
-		$name = 'max_mail_size';
-		$numrows = $zdbh->prepare($sql);
-        $numrows->bindParam(':name', $name);
-        $numrows->execute();
-        if ($numrows->fetchColumn() <> 0) {
-            $sql = $zdbh->prepare($sql);
-            $sql->bindParam(':name', $name);
-            $sql->execute();
-            while ($row = $sql->fetch()) { $res = $row['so_value_tx']; }
-		return $res;
-    	}
-	}
+
 	
     static function ListMailboxes($uid)
     {
@@ -79,11 +63,13 @@ class module_controller extends ctrl_module
             $res = array();
             $sql->execute();
             while ($rowmailboxes = $sql->fetch()) {
+            			// Add by diablo925 -->
 				$numrows1 = $mail_db->prepare("SELECT * FROM mailbox WHERE username=:username");
 			 $numrows1->bindParam(':username', $rowmailboxes['mb_address_vc']);
     		 $numrows1->execute();
              $result1 = $numrows1->fetch();
 				 $quota = $result1['quota'];
+				 // <--
                 if ($rowmailboxes['mb_enabled_in'] == 1) {
                     $status = '<img src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/up.gif" alt="Up"/>';
                 } else {
@@ -482,6 +468,25 @@ class module_controller extends ctrl_module
                     . ' alt="' . ui_language::translate('Pie chart') . '"/>';
         }
     }
+		// Get default guote ADD by Diablo925
+	static function getMailQuote()
+		{
+			global $zdbh;
+			global $controller;
+        		$sql = "SELECT * FROM x_settings WHERE so_name_vc=:name";
+			$name = 'max_mail_size';
+			$numrows = $zdbh->prepare($sql);
+        		$numrows->bindParam(':name', $name);
+        		$numrows->execute();
+        	if ($numrows->fetchColumn() <> 0) {
+            	$sql = $zdbh->prepare($sql);
+            	$sql->bindParam(':name', $name);
+            	$sql->execute();
+            	while ($row = $sql->fetch()) { $res = $row['so_value_tx']; }
+		return $res;
+    		}
+	}
+
 
     static function getResult()
     {
