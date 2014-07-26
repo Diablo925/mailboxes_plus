@@ -16,13 +16,13 @@
     <div class="zform_wrapper alert alert-danger">
         <h2><: Delete Mailbox :>: <@ EditCurrentMailboxName @> ?</h2>
         <p><: Please confirm that you want to delete this mailbox. :></p>
-        <form action="./?module=Mailboxes_plus&action=ConfirmDeleteMailbox" method="post">
+        <form action="./?module=mailboxes_plus&action=ConfirmDeleteMailbox" method="post">
             <table class="none" cellpadding="0" cellspacing="0">
                 <tr>
                     <td colspan="2" align="right">
                         <input type="hidden" name="inDelete" value="<@ EditCurrentMailboxID @>">
                         <button class="button-loader delete btn btn-danger" type="submit" ><: Delete :></button>
-                        <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=Mailboxes_plus';return false;"><: Cancel :></button>
+                        <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=mailboxes_plus';return false;"><: Cancel :></button>
                     </td>
                 </tr>
             </table>
@@ -34,7 +34,7 @@
     <% if isEditMailbox %>
     <div class="zform_wrapper">
         <h2><: Edit mailbox :>: <@ EditCurrentMailboxName @></h2>
-        <form action="./?module=Mailboxes_plus&action=UpdateMailbox" method="post">
+        <form action="./?module=mailboxes_plus&action=UpdateMailbox" method="post">
             <table class="table table-striped">
                 <% loop CurrentMailboxList %>
                 <tr>
@@ -53,7 +53,7 @@
                 <tr>
                     <th>
                         <button class="button-loader btn btn-primary" type="submit" id="button" name="inSave" id="inSave" value="<& id &>"><: Save :></button>
-                        <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=Mailboxes_plus';return false;"><: Cancel :></button>
+                        <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=mailboxes_plus';return false;"><: Cancel :></button>
                     </th>
                     <td></td>
                 </tr>
@@ -66,7 +66,7 @@
     <div class="zgrid_wrapper">
         <h2><: Current mailboxes :></h2>
         <% if MailboxList %>
-        <form action="./?module=Mailboxes_plus&action=EditMailbox" method="post">
+        <form action="./?module=mailboxes_plus&action=EditMailbox" method="post">
             <table class="table table-striped">
                 <tr>
                     <th><: Address :></th>
@@ -101,7 +101,7 @@
                 <td>
                     <h2><: Create a new mailbox :></h2>
                     <% if QuotaLimit %>
-                    <form action="./?module=Mailboxes_plus&action=AddMailbox" method="post">
+                    <form action="./?module=mailboxes_plus&action=AddMailbox" method="post">
                         <table class="table table-striped">
                             <tr>
                                 <th nowrap="nowrap"><: Email Address :>:</th>
