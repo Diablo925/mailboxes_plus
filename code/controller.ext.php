@@ -40,8 +40,10 @@ class module_controller extends ctrl_module
     /**
      * The 'worker' methods.
      */ 
+		 
 
-	static function ListMailboxes($uid)
+	
+    static function ListMailboxes($uid)
     {
         global $zdbh;
         global $controller;
