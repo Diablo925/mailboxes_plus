@@ -117,7 +117,7 @@
                             </tr>
 							<tr>
 								<th nowrap="nowrap"><: Email Quota :>:</th>
-                                <td><input type="text" name="inQuota" id="inQuota" value="<@ MailQuote @>"/></td>
+                                <td><input type="text" name="inQuota" id="inQuota" value="<@ MailQuote @>"/> MB</td>
 								<td></td>
 							</tr>
                             <tr>
