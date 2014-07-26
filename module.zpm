@@ -45,6 +45,10 @@
                     <th><: Set Password :>:</th>
                     <td><input type="password" name="inPassword" id="inPassword" /></td>
                 </tr>
+				<tr>
+                    <th><: Set Quota :>:</th>
+                    <td><input type="text" name="inQouta" id="inQouta" value="<& quota &>"/></td>
+                </tr>
                 <% endloop %>
                 <tr>
                     <th><: Enabled :>:</th>

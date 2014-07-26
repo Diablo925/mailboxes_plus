@@ -40,10 +40,7 @@ class module_controller extends ctrl_module
     /**
      * The 'worker' methods.
      */ 
-		 
-
-	
-    static function ListMailboxes($uid)
+	static function ListMailboxes($uid)
     {
         global $zdbh;
         global $controller;
@@ -107,18 +104,20 @@ class module_controller extends ctrl_module
             $res = array();
             $sql->execute();
             while ($rowmailboxes = $sql->fetch()) {
-			//$numrows1 = $mail_db->prepare("SELECT * FROM mailbox WHERE username=:username");
-			 //$numrows1->bindParam(':username', $rowmailboxes['mb_address_vc']);
-    		 //$numrows1->execute();
-             //$result1 = $numrows1->fetch();
-				 //$quota = $result1['quota'];
+				// Add by diablo925 -->
+			$numrows1 = $mail_db->prepare("SELECT * FROM mailbox WHERE username=:username");
+			$numrows1->bindParam(':username', $rowmailboxes['mb_address_vc']);
+    		$numrows1->execute();
+            $result1 = $numrows1->fetch();
+		    $quota = $result1['quota'];
+			//<--
                 if ($rowmailboxes['mb_enabled_in'] == 1) {
                     $ischeck = "CHECKED";
                 } else {
                     $ischeck = NULL;
                 }
                 $res[] = array('address' => $rowmailboxes['mb_address_vc'],
-					//'quota' => $quota,
+					'quota' => $quota,
                     'created' => date(ctrl_options::GetSystemOption('zpanel_df'), $rowmailboxes['mb_created_ts']),
                     'ischeck' => $ischeck,
                     'id' => $rowmailboxes['mb_id_pk']);
@@ -212,7 +211,7 @@ class module_controller extends ctrl_module
         self::$ok = true;
     }
 
-    static function ExecuteUpdateMailbox($mid, $password, $enabled)
+    static function ExecuteUpdateMailbox($mid, $password, $enabled, $quota)
     {
         global $zdbh;
         global $controller;
@@ -362,7 +361,7 @@ class module_controller extends ctrl_module
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
         $enabled = (isset($formvars['inEnabled'])) ? fs_director::GetCheckboxValue($formvars['inEnabled']) : 0;
-        if (self::ExecuteUpdateMailbox($formvars['inSave'], $formvars['inPassword'], $enabled))
+        if (self::ExecuteUpdateMailbox($formvars['inSave'], $formvars['inPassword'], $enabled, $formvars['inQouta']))
             self::$ok = true;
         return true;
     }
@@ -468,7 +467,7 @@ class module_controller extends ctrl_module
                     . ' alt="' . ui_language::translate('Pie chart') . '"/>';
         }
     }
-		// Get default guote ADD by Diablo925
+		// Get default quote ADD by Diablo925
 	static function getMailQuote()
 		{
 			global $zdbh;
