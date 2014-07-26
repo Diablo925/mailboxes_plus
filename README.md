@@ -1,5 +1,14 @@
-mailboxs_plus
+mailboxes_plus
 =============
-it is a module for Zpanel and Sentora
+Version: 1.0.0
+[Forums](http://forums.zpanelcp.com/Thread-Mailboxes-plus?pid=87013) for comments, discussion, more information and community support.
 
-allow to add mail qouta 
+
+
+Description
+A Module that allow you to change the default qouta on a mailbox when you make it 
+
+
+
+
+
