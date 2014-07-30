@@ -138,14 +138,16 @@ if (!fs_director::CheckForEmptyValue(self::$delete)) {
 //Saving PostFix Mailboxes
 if (!fs_director::CheckForEmptyValue(self::$update)) {
     if (!fs_director::CheckForEmptyValue($password)) {
-        $sql = $mail_db->prepare("UPDATE mailbox SET password=:password, modified=NOW() WHERE username=:mb_address_vc");
+        $sql = $mail_db->prepare("UPDATE mailbox SET password=:password, quota=:quota, modified=NOW() WHERE username=:mb_address_vc");
         $password = '{PLAIN-MD5}' . md5($password);
         $sql->bindParam(':password', $password);
+		$sql->bindParam(':quota', $mailquota);
         $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
         $sql->execute();
     }
-    $sql = $mail_db->prepare("UPDATE mailbox SET active=:enabled, modified=NOW() WHERE username=:mb_address_vc");
+    $sql = $mail_db->prepare("UPDATE mailbox SET active=:enabled, quota=:quota, modified=NOW() WHERE username=:mb_address_vc");
     $sql->bindParam(':enabled', $enabled);
+	$sql->bindParam(':quota', $mailquota);
     $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
     $sql->execute();
 }

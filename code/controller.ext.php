@@ -194,7 +194,7 @@ class module_controller extends ctrl_module
         self::$ok = true;
     }
 
-    static function ExecuteUpdateMailbox($mid, $password, $enabled)
+    static function ExecuteUpdateMailbox($mid, $password, $enabled, $mailquota)
     {
         global $zdbh;
         global $controller;
@@ -209,6 +209,14 @@ class module_controller extends ctrl_module
             self::ExecuteDisableMailbox($mid);
         }
         self::$update = true;
+		$rows = $zdbh->prepare("
+            SELECT * FROM x_accounts
+            LEFT JOIN x_quotas ON (x_accounts.ac_package_fk=x_quotas.qt_package_fk)
+            WHERE x_accounts.ac_id_pk=:uid
+          ");
+        $rows->bindParam(':uid', $rowmailbox['mb_acc_fk']);
+        $rows->execute();
+        while ($row = $rows->fetch()) { $mailquota = $row['qt_mailquota_in']; }
         // Include mail server specific file here.
         $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
         if (file_exists($MailServerFile)) {

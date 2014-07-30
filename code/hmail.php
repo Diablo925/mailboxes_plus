@@ -51,14 +51,16 @@ if (!fs_director::CheckForEmptyValue(self::$delete)) {
 //Saving hMail Mailboxes
 if (self::$update) {
     if (!fs_director::CheckForEmptyValue($password)) {
-        $sql = $mail_db->prepare("UPDATE hm_accounts SET accountpassword=:password WHERE accountaddress=:mb_address_vc");
+        $sql = $mail_db->prepare("UPDATE hm_accounts SET accountpassword=:password, accountmaxsize=:quota WHERE accountaddress=:mb_address_vc");
         $password = md5($password);
         $sql->bindParam(':password', $password);
+		$sql->bindParam(':quota', $mailquota);
         $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
         $sql->execute();
     }
-    $sql = $mail_db->prepare("UPDATE hm_accounts SET accountactive=:enabled WHERE accountaddress=:mb_address_vc");
+    $sql = $mail_db->prepare("UPDATE hm_accounts SET accountactive=:enabled, accountmaxsize=:quota WHERE accountaddress=:mb_address_vc");
     $sql->bindParam(':enabled', $enabled);
+	$sql->bindParam(':quota', $mailquota);
     $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
     $sql->execute();
 }
