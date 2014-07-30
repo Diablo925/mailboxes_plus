@@ -6,7 +6,6 @@ Version: 1.0.0<br />
 
 
 ##Description
-=============
 Use only with [packages_plus](https://github.com/Diablo925/packages_plus)
 
 ##Author
