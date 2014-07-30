@@ -39,8 +39,8 @@ class module_controller extends ctrl_module
 
     /**
      * The 'worker' methods.
-     */ 
-	static function ListMailboxes($uid)
+     */
+    static function ListMailboxes($uid)
     {
         global $zdbh;
         global $controller;
@@ -50,24 +50,13 @@ class module_controller extends ctrl_module
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
         $numrows->execute();
-		// Include mail server specific file here.
-        $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
-        if (file_exists($MailServerFile))
-            include($MailServerFile);
-			
+
         if ($numrows->fetchColumn() <> 0) {
             $sql = $zdbh->prepare($sql);
             $sql->bindParam(':userid', $currentuser['userid']);
             $res = array();
             $sql->execute();
             while ($rowmailboxes = $sql->fetch()) {
-            // Add by diablo925 -->
-					$quotarows = $mail_db->prepare("SELECT * FROM mailbox WHERE username=:username");
-			 		$quotarows->bindParam(':username', $rowmailboxes['mb_address_vc']);
-    		 		$quotarows->execute();
-             		$result = $quotarows->fetch();
-				 	$quota = $result['quota'];
-			// <--
                 if ($rowmailboxes['mb_enabled_in'] == 1) {
                     $status = '<img src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/up.gif" alt="Up"/>';
                 } else {
@@ -75,7 +64,6 @@ class module_controller extends ctrl_module
                 }
                 $res[] = array('address' => $rowmailboxes['mb_address_vc'],
                     'created' => date(ctrl_options::GetSystemOption('zpanel_df'), $rowmailboxes['mb_created_ts']),
-					'quota' => $quota, //<-- Add by diablo925
                     'status' => $status,
                     'id' => $rowmailboxes['mb_id_pk']);
             }
@@ -88,37 +76,23 @@ class module_controller extends ctrl_module
     static function ListCurrentMailboxes($mid)
     {
         global $zdbh;
-		global $controller;
         $sql = "SELECT * FROM x_mailboxes WHERE mb_id_pk=:mid AND mb_deleted_ts IS NULL ORDER BY mb_address_vc ASC";
         //$numrows = $zdbh->query($sql);
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':mid', $mid);
         $numrows->execute();
-		// Include mail server specific file here.
-        $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
-        if (file_exists($MailServerFile)) {
-            include($MailServerFile);
-        }
         if ($numrows->fetchColumn() <> 0) {
             $sql = $zdbh->prepare($sql);
             $sql->bindParam(':mid', $mid);
             $res = array();
             $sql->execute();
             while ($rowmailboxes = $sql->fetch()) {
-			// Add by diablo925 -->
-					$quotarows = $mail_db->prepare("SELECT quota FROM mailbox WHERE username=:username");
-					$quotarows->bindParam(':username', $rowmailboxes['mb_address_vc']);
-    				$quotarows->execute();
-            		$result = $quotarows->fetch();
-		    		$quota = $result['quota'];
-			//<--
                 if ($rowmailboxes['mb_enabled_in'] == 1) {
                     $ischeck = "CHECKED";
                 } else {
                     $ischeck = NULL;
                 }
                 $res[] = array('address' => $rowmailboxes['mb_address_vc'],
-					'quota' => $quota, //<-- Add by diablo925
                     'created' => date(ctrl_options::GetSystemOption('zpanel_df'), $rowmailboxes['mb_created_ts']),
                     'ischeck' => $ischeck,
                     'id' => $rowmailboxes['mb_id_pk']);
@@ -152,7 +126,7 @@ class module_controller extends ctrl_module
         }
     }
 
-    static function ExecuteAddMailbox($uid, $address, $domain, $password, $quota)
+    static function ExecuteAddMailbox($uid, $address, $domain, $password, $mailquota)
     {
         global $zdbh;
         global $controller;
@@ -164,6 +138,14 @@ class module_controller extends ctrl_module
         $address = strtolower(str_replace(' ', '', $address));
         $fulladdress = strtolower(str_replace(' ', '', $address . "@" . $domain));
         self::$create = true;
+		$rows = $zdbh->prepare("
+            SELECT * FROM x_accounts
+            LEFT JOIN x_quotas ON (x_accounts.ac_package_fk=x_quotas.qt_package_fk)
+            WHERE x_accounts.ac_id_pk= :uid
+          ");
+        $rows->bindParam(':uid', $currentuser['userid']);
+        $rows->execute();
+        while ($row = $rows->fetch()) { $mailquota = $row['qt_mailquota_in']; }
         // Include mail server specific file here.
         $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
         if (file_exists($MailServerFile))
@@ -212,7 +194,7 @@ class module_controller extends ctrl_module
         self::$ok = true;
     }
 
-    static function ExecuteUpdateMailbox($mid, $password, $enabled, $quota)
+    static function ExecuteUpdateMailbox($mid, $password, $enabled)
     {
         global $zdbh;
         global $controller;
@@ -324,14 +306,13 @@ class module_controller extends ctrl_module
     /**
      * Webinterface sudo methods.
      */
-	 
     static function doAddMailbox()
     {
         global $controller;
         runtime_csfr::Protect();
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
-        if (self::ExecuteAddMailbox($currentuser['userid'], $formvars['inAddress'], $formvars['inDomain'], $formvars['inPassword'], $formvars['inQuota']))
+        if (self::ExecuteAddMailbox($currentuser['userid'], $formvars['inAddress'], $formvars['inDomain'], $formvars['inPassword']))
             self::$ok = true;
         return true;
     }
@@ -362,7 +343,7 @@ class module_controller extends ctrl_module
         $currentuser = ctrl_users::GetUserDetail();
         $formvars = $controller->GetAllControllerRequests('FORM');
         $enabled = (isset($formvars['inEnabled'])) ? fs_director::GetCheckboxValue($formvars['inEnabled']) : 0;
-        if (self::ExecuteUpdateMailbox($formvars['inSave'], $formvars['inPassword'], $enabled, $formvars['inQouta']))
+        if (self::ExecuteUpdateMailbox($formvars['inSave'], $formvars['inPassword'], $enabled))
             self::$ok = true;
         return true;
     }
@@ -442,7 +423,7 @@ class module_controller extends ctrl_module
             $current = self::ListCurrentMailboxes($controller->GetControllerRequest('URL', 'other'));
             return $current[0]['id'];
         } else {
-            return '';
+            return "";
         }
     }
 
@@ -468,24 +449,6 @@ class module_controller extends ctrl_module
                     . ' alt="' . ui_language::translate('Pie chart') . '"/>';
         }
     }
-		// Get default quote ADD by Diablo925
-	static function getMailQuote()
-		{
-			global $zdbh;
-			global $controller;
-        		$sql = "SELECT * FROM x_settings WHERE so_name_vc=:name";
-				$name = 'max_mail_size';
-				//$numrows = $zdbh->prepare($sql);
-        		//$numrows->bindParam(':name', $name);
-        		//$numrows->execute();
-        		//if ($numrows->fetchColumn() <> 0) {
-            	$sql = $zdbh->prepare($sql);
-            	$sql->bindParam(':name', $name);
-            	$sql->execute();
-            	while ($row = $sql->fetch()) { $res = $row['so_value_tx']; }
-				return $res;
-    		//}
-	}
 
     static function getResult()
     {
