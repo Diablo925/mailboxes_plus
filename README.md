@@ -7,8 +7,7 @@ Version: 1.0.0<br />
 
 ##Description
 =============
-A Module that allow you to change the default qouta on a mailbox when you make it 
-
+Use only with packages_plus
 
 ##Author
 Module is edit by Diablo925 [@github](https://github.com/Diablo925) 
