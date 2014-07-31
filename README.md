@@ -1,7 +1,7 @@
 #mailboxes_plus
 
 Version: 1.0.0<br />
-[Forums](http://forums.zpanelcp.com/Thread-Mailboxes-plus?pid=87013) for comments, discussion, more information and community support.
+[Forums](http://forums.zpanelcp.com/Thread-Packages-Plus-Mailboxes-Plus3) for comments, discussion, more information and community support.
 
 
 
