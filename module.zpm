@@ -71,16 +71,18 @@
                 <tr>
                     <th><: Address :></th>
                     <th><: Date created :></th>
+					<th><: Quota :></th>
                     <th><: Status :></th>
-                    <th></th>
+					<th></th>
                     <th></th>
                 </tr>
                 <% loop MailboxList %>
                 <tr>
                     <td><& address &></td>
                     <td><& created &></td>
-                    <td><& status &></td>
-                    <td><button class="button-loader btn btn-default" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>"><: Edit :></button></td>
+					<td><& quota &> <: MByte :></td>
+					<td><& status &></td>
+					<td><button class="button-loader btn btn-default" type="submit" id="button" name="inEdit_<& id &>" id="inEdit_<& id &>" value="inEdit_<& id &>"><: Edit :></button></td>
                     <td><button class="button-loader delete btn btn-danger" type="submit" id="button" name="inDelete_<& id &>" id="inDelete_<& id &>" value="inDelete_<& id &>"><: Delete :></button></td>
                 </tr>
                 <% endloop %>

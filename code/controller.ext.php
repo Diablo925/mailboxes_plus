@@ -65,6 +65,7 @@ class module_controller extends ctrl_module
                 $res[] = array('address' => $rowmailboxes['mb_address_vc'],
                     'created' => date(ctrl_options::GetSystemOption('zpanel_df'), $rowmailboxes['mb_created_ts']),
                     'status' => $status,
+					'quota' => $rowmailboxes['mb_quota_vc'],
                     'id' => $rowmailboxes['mb_id_pk']);
             }
             return $res;
@@ -145,7 +146,8 @@ class module_controller extends ctrl_module
           ");
         $rows->bindParam(':uid', $currentuser['userid']);
         $rows->execute();
-        while ($row = $rows->fetch()) { $mailquota = $row['qt_mailquota_in']; }
+        while ($row = $rows->fetch()) { 
+		$mailquota = $row['qt_mailquota_in']; }
         // Include mail server specific file here.
         $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
         if (file_exists($MailServerFile))
@@ -153,15 +155,18 @@ class module_controller extends ctrl_module
 
         $sql = "INSERT INTO x_mailboxes (mb_acc_fk,
 											 mb_address_vc,
-											 mb_created_ts) VALUES (
+											 mb_created_ts,
+											 mb_quota_vc) VALUES (
 											 :userid,
 											 :fulladdress,
-											 :time)";
+											 :time,
+											 :quota)";
         $time = time();
         $sql = $zdbh->prepare($sql);
         $sql->bindParam(':time', $time);
         $sql->bindParam(':userid', $currentuser['userid']);
         $sql->bindParam(':fulladdress', $fulladdress);
+		$sql->bindParam(':quota', $mailquota);
         $sql->execute();
         runtime_hook::Execute('OnAfterCreateMailbox');
         self::$ok = true;
@@ -222,6 +227,10 @@ class module_controller extends ctrl_module
         if (file_exists($MailServerFile)) {
             include($MailServerFile);
         }
+		$sql = $zdbh->prepare("UPDATE x_mailboxes SET mb_quota_vc=:quota WHERE mb_id_pk=:mid");
+        $sql->bindParam(':mid', $mid);
+		$sql->bindParam(':quota', $mailquota);
+        $sql->execute();
         runtime_hook::Execute('OnAfterUpdateMailbox');
         self::$ok = true;
         return;
