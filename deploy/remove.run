@@ -22,7 +22,7 @@ removeModule();
 
 function removeModule(){
     global $zdbh;
-	$sql = $zdbh->prepare("ALTER TABLE zpanel_core.'x_mailboxes' DROP 'mb_quota_vc'");
+	$sql = $zdbh->prepare("ALTER TABLE x_mailboxes DROP mb_quota_vc");
     $sql->execute();
 	}
 ?>
