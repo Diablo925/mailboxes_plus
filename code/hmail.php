@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @copyright 2014-2015 Sentora Project (http://www.sentora.org/) 
+ * Sentora is a GPL fork of the ZPanel Project whose original header follows:
  *
  * ZPanel - A Cross-Platform Open-Source Web Hosting Control panel.
  * 
@@ -51,16 +53,14 @@ if (!fs_director::CheckForEmptyValue(self::$delete)) {
 //Saving hMail Mailboxes
 if (self::$update) {
     if (!fs_director::CheckForEmptyValue($password)) {
-        $sql = $mail_db->prepare("UPDATE hm_accounts SET accountpassword=:password, accountmaxsize=:quota WHERE accountaddress=:mb_address_vc");
+        $sql = $mail_db->prepare("UPDATE hm_accounts SET accountpassword=:password WHERE accountaddress=:mb_address_vc");
         $password = md5($password);
         $sql->bindParam(':password', $password);
-		$sql->bindParam(':quota', $mailquota);
         $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
         $sql->execute();
     }
-    $sql = $mail_db->prepare("UPDATE hm_accounts SET accountactive=:enabled, accountmaxsize=:quota WHERE accountaddress=:mb_address_vc");
+    $sql = $mail_db->prepare("UPDATE hm_accounts SET accountactive=:enabled WHERE accountaddress=:mb_address_vc");
     $sql->bindParam(':enabled', $enabled);
-	$sql->bindParam(':quota', $mailquota);
     $sql->bindParam(':mb_address_vc', $rowmailbox['mb_address_vc']);
     $sql->execute();
 }
@@ -120,8 +120,7 @@ if (!fs_director::CheckForEmptyValue(self::$create)) {
 												 '')";
         $sql = $mail_db->prepare($sql);
         $sql->bindParam(':domain', $domain);
-        //$maxMail = ctrl_options::GetSystemOption('max_mail_size');
-		$maxMail = $mailquota;
+        $maxMail = ctrl_options::GetSystemOption('max_mail_size');
         $sql->bindParam(':maxMail', $maxMail);
         $sql->execute();
     }
@@ -187,8 +186,7 @@ if (!fs_director::CheckForEmptyValue(self::$create)) {
         $sql->bindParam(':password', $password);
         $sql->bindParam(':domain_id', $domain_id);
         $sql->bindParam(':fulladdress', $fulladdress);
-        //$maxMail = ctrl_options::GetSystemOption('max_mail_size');
-		$maxMail = $mailquota;
+        $maxMail = ctrl_options::GetSystemOption('max_mail_size');
         $sql->bindParam(':maxMail', $maxMail);
         $hmail = ctrl_options::GetSystemOption('hmailserver_et');
         $sql->bindParam(':hmail', $hmail);
