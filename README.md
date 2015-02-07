@@ -1,7 +1,7 @@
 #mailboxes_plus
 
 Version: 1.0.0<br />
-[Forums](http://forums.zpanelcp.com/Thread-Packages-Plus-Mailboxes-Plus3) for comments, discussion, more information and community support.
+[Forums](http://forums.sentora.org/showthread.php?tid=1011) for comments, discussion, more information and community support.
 
 
 
