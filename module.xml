@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
-    	<name>Mail Boxes Plus</name>
-    	<version>115</version>
-		<type>user</type>
-    	<defaultcat>Mail</defaultcat>
-    	<desc>Using this module you have the ability to create IMAP and POP3 Mailboxes. Use only with packages_plus</desc>
-    	<authorname>Diablo925</authorname>
-    	<authoremail>Carsten@alio.dk</authoremail>
-    	<authorurl></authorurl>
-    	<updateurl></updateurl>
+    <name>Mail Boxes plus</name>
+    <version>100</version>
+    <defaultcat>Mail</defaultcat>
+    <desc>Using this module you have the ability to create IMAP and POP3 Mailboxes.</desc>
+    <authorname>Sentora Project</authorname>
+    <authoremail>info@sentora.org</authoremail>
+    <authorurl>http://sentora.org/</authorurl>
+    <updateurl>http://store.sentora.org/version.xml</updateurl>
 </module>
