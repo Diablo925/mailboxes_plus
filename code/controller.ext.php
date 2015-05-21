@@ -157,7 +157,7 @@ class module_controller extends ctrl_module
 
         $sql = "INSERT INTO x_mailboxes (mb_acc_fk,
 											 mb_address_vc,
-											 mb_created_ts
+											 mb_created_ts,
 											 mb_quota_vc) VALUES (
 											 :userid,
 											 :fulladdress,
